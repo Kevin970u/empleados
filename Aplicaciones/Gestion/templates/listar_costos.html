@@ -1,0 +1,80 @@
+{% include 'header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Listado de Costos</h2>
+    <hr>
+    <a href="{% url 'crear_costo' %}" class="btn btn-primary mb-3">Crear Costo</a>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre del Costo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for costo in costos %}
+                    <tr>
+                        <td>{{ costo.c_costo_cos }}</td>
+                        <td>
+                            <a href="{% url 'editar_costo' costo.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                            <button class="btn btn-sm btn-danger eliminar-costo" data-id="{{ costo.pk }}">Eliminar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.eliminar-costo').click(function(e) {
+            e.preventDefault();
+            var costoId = $(this).data('id');
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "eliminar_costo" 0 %}'.replace('0', costoId),
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            'pk': costoId
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                '¡Eliminado!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr, errmsg, err) {
+                            Swal.fire(
+                                'Error',
+                                'No se pudo eliminar el costo.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% include 'footer.html' %}

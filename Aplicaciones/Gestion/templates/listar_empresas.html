@@ -1,0 +1,81 @@
+{% include 'header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Listado de Empresas</h2>
+    <hr>
+    <a href="{% url 'crear_empresa' %}" class="btn btn-primary mb-3">Crear Empresa</a>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre de la Empresa</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for empresa in empresas %}
+                    <tr>
+                        <td>{{ empresa.empresa_empre }}</td>
+                        <td>
+                            <a href="{% url 'editar_empresa' empresa.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                            <button class="btn btn-sm btn-danger eliminar-empresa" data-id="{{ empresa.pk }}">Eliminar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.eliminar-empresa').click(function(e) {
+            e.preventDefault();
+            var empresaId = $(this).data('id');
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "eliminar_empresa" 0 %}'.replace('0', empresaId),
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            'pk': empresaId
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                '¡Eliminado!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr, errmsg, err) {
+                            Swal.fire(
+                                'Error',
+                                'No se pudo eliminar la empresa.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% include 'footer.html' %}

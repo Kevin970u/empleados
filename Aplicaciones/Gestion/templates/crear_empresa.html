@@ -1,0 +1,15 @@
+{% include 'header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Crear Nueva Empresa</h2>
+    <hr>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="empresa_empre">Nombre de la Empresa</label>
+            <input type="text" class="form-control" id="empresa_empre" name="empresa_empre" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear Empresa</button>
+    </form>
+</div>
+{% endblock %}

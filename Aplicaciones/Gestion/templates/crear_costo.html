@@ -1,0 +1,16 @@
+{% include 'header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Crear Nuevo Costo</h2>
+    <hr>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="c_costo_cos">Nombre del Costo</label>
+            <input type="text" class="form-control" id="c_costo_cos" name="c_costo_cos" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear Costo</button>
+    </form>
+</div>
+{% endblock %}
+{% include 'footer.html' %}

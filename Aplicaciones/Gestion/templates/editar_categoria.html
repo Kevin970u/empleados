@@ -1,0 +1,19 @@
+{% include 'header.html' %}
+{% block content %}
+<body>
+<div class="container mt-4">
+    <h2>Editar Categoría</h2>
+    <hr>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="categoria_cat">Nombre de la Categoría:</label>
+            <input type="text" class="form-control" id="categoria_cat" name="categoria_cat" value="{{ categoria.categoria_cat }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+</div>
+</body>
+</html>
+{% endblock %}
+{% include 'footer.html' %}

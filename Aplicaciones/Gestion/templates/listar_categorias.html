@@ -1,0 +1,79 @@
+{% include 'header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Listado de Categorías</h2>
+    <hr>
+    <a href="{% url 'crear_categoria' %}" class="btn btn-primary mb-3">Crear Categoría</a>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre de la Categoría</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for categoria in categorias %}
+                    <tr>
+                        <td>{{ categoria.categoria_cat }}</td>
+                        <td>
+                            <a href="{% url 'editar_categoria' categoria.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                            <button class="btn btn-sm btn-danger eliminar-categoria" data-id="{{ categoria.pk }}">Eliminar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.eliminar-categoria').click(function(e) {
+            e.preventDefault();
+            var categoryId = $(this).data('id');
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "eliminar_categoria" 0 %}'.replace('0', categoryId),
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            'pk': categoryId
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                '¡Eliminado!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr, errmsg, err) {
+                            Swal.fire(
+                                'Error',
+                                'No se pudo eliminar la categoría.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% include 'footer.html' %}
